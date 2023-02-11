@@ -65,7 +65,7 @@ class Subtask:
                 started = True
                 break
         if not started:
-            raise RuntimeError(f"Failed to start in time")
+            raise RuntimeError("Failed to start process in time")
 
     def __del__(self):
         # Always kill the subprocess when this goes out of scope, so we don't

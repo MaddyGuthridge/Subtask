@@ -8,16 +8,9 @@ import os
 import subprocess
 import signal
 import time
+from tempfile import TemporaryFile
 from pathlib import Path
 from typing import Optional, Callable
-
-
-def output_folder():
-    """Create the ./output/ directory if needed"""
-    try:
-        os.mkdir('output', )
-    except FileExistsError:
-        pass
 
 
 class Subtask:
@@ -58,17 +51,12 @@ class Subtask:
         curr_env = os.environ.copy()
         if env is not None:
             curr_env.update(env)
-        output_folder()
         if live_output:
             self.__stdout = None
             self.__stderr = None
-            self.stdout = None
-            self.stderr = None
         else:
-            self.stdout = Path(f"output/{name}.stdout.txt")
-            self.stderr = Path(f"output/{name}.stderr.txt")
-            self.__stdout = open(self.stdout, 'w')
-            self.__stderr = open(self.stderr, 'w')
+            self.__stdout = TemporaryFile('w')
+            self.__stderr = TemporaryFile('w')
         self.process = subprocess.Popen(
             args,
             stdout=self.__stdout,
@@ -91,30 +79,39 @@ class Subtask:
         # end up with an orphaned process
         self.kill()
 
-    def close_files(self):
-        if self.__stdout is not None:
-            self.__stdout.close()
-        if self.__stderr is not None:
-            self.__stderr.close()
+    def write_stdout(self, output: Path):
+        """Write the task's stdout to a file"""
+        if self.__stdout is None:
+            raise ValueError("Cannot write output to file if output was "
+                             "written to terminal")
+        self.__stdout.seek(0)
+        with open(output) as f:
+            f.write(self.__stdout.read())
+
+    def write_stderr(self, output: Path):
+        """Write the task's stderr to a file"""
+        if self.__stderr is None:
+            raise ValueError("Cannot write output to file if output was "
+                             "written to terminal")
+        self.__stderr.seek(0)
+        with open(output) as f:
+            f.write(self.__stderr.read())
 
     def interrupt(self):
         """Interrupt the process (like pressing Ctrl+C)"""
         if self.process is not None:
             self.process.send_signal(signal.SIGINT)
-        self.close_files()
 
     def kill(self):
         """Kill the process forcefully (useful if it's not responding)"""
         if self.process is not None:
             self.process.kill()
-        self.close_files()
 
     def wait(self):
         """Wait for the process to finish executing and return its exit code"""
         if self.process is None:
             raise ValueError("Process not started")
         ret = self.process.wait()
-        self.close_files()
         return ret
 
     def poll(self):
@@ -124,6 +121,4 @@ class Subtask:
         if self.process is None:
             raise ValueError("Process not started")
         ret = self.process.poll()
-        if ret is not None:
-            self.close_files()
         return ret

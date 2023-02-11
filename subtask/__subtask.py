@@ -17,16 +17,9 @@ class Subtask:
     """
     Simple wrapper around `subprocess.Popen`
     """
-    process: Optional[subprocess.Popen]
-    """Access to the underlying Popen object"""
-    stdout: Optional[Path]
-    """Location of the file containing stdout"""
-    stderr: Optional[Path]
-    """Location of the file containing stderr"""
 
     def __init__(
         self,
-        name: str,
         args: list[str],
         live_output: bool = False,
         env: Optional[dict[str, str]] = None,
@@ -36,7 +29,6 @@ class Subtask:
         Create a Subtask.
 
         ## Args
-        * `name`: name of task (used for output files)
         * `args`: list of args for program to run (eg ['python', 'foo.py'])
         * `live_output`: whether to print the subtask's output live or not
         * `env`: dictionary of environment variables to add into the
@@ -47,22 +39,23 @@ class Subtask:
         """
         if wait_for is None:
             wait_for = lambda: True  # noqa: E731
-        self.process = None
         curr_env = os.environ.copy()
         if env is not None:
             curr_env.update(env)
         if live_output:
-            self.__stdout = None
-            self.__stderr = None
+            self.stdout = None
+            self.stderr = None
         else:
-            self.__stdout = TemporaryFile('w')
-            self.__stderr = TemporaryFile('w')
+            self.stdout = TemporaryFile()
+            self.stderr = TemporaryFile()
         self.process = subprocess.Popen(
             args,
-            stdout=self.__stdout,
-            stderr=self.__stderr,
+            stdout=self.stdout,
+            stderr=self.stderr,
             env=curr_env
         )
+        """Access to the underlying Popen object"""
+
         # Request until we get a success, but crash if we failed to start
         # in 10 seconds
         start_time = time.time()
@@ -72,7 +65,7 @@ class Subtask:
                 started = True
                 break
         if not started:
-            raise RuntimeError(f"{name} failed to start in time")
+            raise RuntimeError(f"Failed to start in time")
 
     def __del__(self):
         # Always kill the subprocess when this goes out of scope, so we don't
@@ -81,21 +74,37 @@ class Subtask:
 
     def write_stdout(self, output: Path):
         """Write the task's stdout to a file"""
-        if self.__stdout is None:
+        if self.stdout is None:
             raise ValueError("Cannot write output to file if output was "
                              "written to terminal")
-        self.__stdout.seek(0)
-        with open(output) as f:
-            f.write(self.__stdout.read())
+        self.stdout.seek(0)
+        with open(output, 'w+b') as f:
+            f.write(self.stdout.read())
 
     def write_stderr(self, output: Path):
         """Write the task's stderr to a file"""
-        if self.__stderr is None:
+        if self.stderr is None:
             raise ValueError("Cannot write output to file if output was "
                              "written to terminal")
-        self.__stderr.seek(0)
-        with open(output) as f:
-            f.write(self.__stderr.read())
+        self.stderr.seek(0)
+        with open(output, 'w+b') as f:
+            f.write(self.stderr.read())
+
+    def read_stdout(self) -> str:
+        """read the task's stdout to a file"""
+        if self.stdout is None:
+            raise ValueError("Cannot read output if output was "
+                             "written to terminal")
+        self.stdout.seek(0)
+        return self.stdout.read().decode()
+
+    def read_stderr(self) -> str:
+        """read the task's stderr to a file"""
+        if self.stderr is None:
+            raise ValueError("Cannot read output if output was "
+                             "written to terminal")
+        self.stderr.seek(0)
+        return self.stderr.read().decode()
 
     def interrupt(self):
         """Interrupt the process (like pressing Ctrl+C)"""

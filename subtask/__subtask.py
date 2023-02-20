@@ -125,7 +125,10 @@ class Subtask:
 
     def wait(self, timeout: Optional[int] = None) -> Optional[int]:
         """Wait for the process to finish executing and return its exit code"""
-        ret = self.process.wait(timeout)
+        try:
+            ret = self.process.wait(timeout)
+        except subprocess.TimeoutExpired:
+            return None
         return ret
 
     def poll(self) -> Optional[int]:

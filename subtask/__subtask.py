@@ -8,6 +8,7 @@ import os
 import subprocess
 import signal
 import time
+from typing import overload
 from tempfile import TemporaryFile
 from pathlib import Path
 from typing import Optional, Callable
@@ -24,7 +25,7 @@ class Subtask:
         live_output: bool = False,
         env: Optional[dict[str, str]] = None,
         wait_for: Optional[Callable[[], bool]] = None,
-    ):
+    ) -> None:
         """
         Create a Subtask.
 
@@ -67,12 +68,12 @@ class Subtask:
         if not started:
             raise RuntimeError("Failed to start process in time")
 
-    def __del__(self):
+    def __del__(self) -> None:
         # Always kill the subprocess when this goes out of scope, so we don't
         # end up with an orphaned process
         self.kill()
 
-    def write_stdout(self, output: Path):
+    def write_stdout(self, output: Path) -> None:
         """Write the task's stdout to a file"""
         if self.stdout is None:
             raise ValueError("Cannot write output to file if output was "
@@ -81,7 +82,7 @@ class Subtask:
         with open(output, 'w+b') as f:
             f.write(self.stdout.read())
 
-    def write_stderr(self, output: Path):
+    def write_stderr(self, output: Path) -> None:
         """Write the task's stderr to a file"""
         if self.stderr is None:
             raise ValueError("Cannot write output to file if output was "
@@ -106,28 +107,30 @@ class Subtask:
         self.stderr.seek(0)
         return self.stderr.read().decode()
 
-    def interrupt(self):
+    def interrupt(self) -> None:
         """Interrupt the process (like pressing Ctrl+C)"""
-        if self.process is not None:
-            self.process.send_signal(signal.SIGINT)
+        self.process.send_signal(signal.SIGINT)
 
-    def kill(self):
+    def kill(self) -> None:
         """Kill the process forcefully (useful if it's not responding)"""
-        if self.process is not None:
-            self.process.kill()
+        self.process.kill()
 
-    def wait(self):
+    @overload
+    def wait(self, timeout: int) -> Optional[int]:
+        ...
+
+    @overload
+    def wait(self, timeout: None = None) -> int:
+        ...
+
+    def wait(self, timeout: Optional[int] = None) -> Optional[int]:
         """Wait for the process to finish executing and return its exit code"""
-        if self.process is None:
-            raise ValueError("Process not started")
-        ret = self.process.wait()
+        ret = self.process.wait(timeout)
         return ret
 
-    def poll(self):
+    def poll(self) -> Optional[int]:
         """Poll the process, returning `None` if it's still running, or its
         exit code if it has finished.
         """
-        if self.process is None:
-            raise ValueError("Process not started")
         ret = self.process.poll()
         return ret

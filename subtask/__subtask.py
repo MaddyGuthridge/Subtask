@@ -25,6 +25,7 @@ class Subtask:
         live_output: bool = False,
         env: Optional[dict[str, str]] = None,
         wait_for: Optional[Callable[[], bool]] = None,
+        input: Optional[str] = None,
     ) -> None:
         """
         Create a Subtask.
@@ -37,6 +38,7 @@ class Subtask:
         * `wait_for`: a callback to determine whether the task has started. It
           will be continually called until it returns `True`. Useful for web
           servers which take a hot minute to start up.
+        * `input`: an input string to be passed to the task
         """
         if wait_for is None:
             wait_for = lambda: True  # noqa: E731
@@ -49,8 +51,15 @@ class Subtask:
         else:
             self.stdout = TemporaryFile()
             self.stderr = TemporaryFile()
+        if input is None:
+            self.stdin = None
+        else:
+            self.stdin = TemporaryFile('w')
+            self.stdin.write(input)
+            self.stdin.seek(0)
         self.process = subprocess.Popen(
             args,
+            stdin=self.stdin,
             stdout=self.stdout,
             stderr=self.stderr,
             env=curr_env

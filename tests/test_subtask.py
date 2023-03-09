@@ -20,3 +20,12 @@ def test_env():
     )
     task.wait()
     assert task.read_stdout().strip() == "Hello world!"
+
+
+def test_input():
+    task = Subtask(
+        ['cat'],
+        input="Hello world!",
+    )
+    task.wait()
+    assert task.read_stdout().strip() == "Hello world!"

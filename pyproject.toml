@@ -6,6 +6,35 @@ authors = ["Miguel Guthridge <hdsq@outlook.com.au>"]
 license = "MIT"
 readme = "README.md"
 
+repository = "https://github.com/MiguelGuthridge/subtask"
+documentation = "https://github.com/MiguelGuthridge/subtask"
+
+keywords = [
+    "popen",
+    "task",
+    "process",
+    "subprocess",
+    "subtask",
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Framework :: Pytest",
+    "Typing :: Typed",
+]
+include = ["py.typed"]
+
+packages = [
+    { include = "subtask" }
+]
+
+[tool.poetry.urls]
+"Online Documentation" = "https://github.com/MiguelGuthridge/subtask"
+"Bug Tracker" = "https://github.com/MiguelGuthridge/subtask/issues"
+
 [tool.poetry.dependencies]
 python = "^3.9"
 

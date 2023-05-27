@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "subtask"
-version = "0.3.1"
+version = "1.0.0"
 description = "A simple wrapper around `subprocess.Popen` to reduce the painfulness of running multiple processes concurrently."
 authors = ["Miguel Guthridge <hdsq@outlook.com.au>"]
 license = "MIT"
@@ -21,9 +21,9 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Development Status :: 4 - Beta",
-    "Framework :: Pytest",
+    "Development Status :: 5 - Production/Stable",
     "Typing :: Typed",
+    "Topic :: Software Development :: Libraries",
 ]
 include = ["py.typed"]
 

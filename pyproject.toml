@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "subtask"
-version = "1.0.0"
+version = "1.0.1"
 description = "A simple wrapper around `subprocess.Popen` to reduce the painfulness of running multiple processes concurrently."
 authors = ["Miguel Guthridge <hdsq@outlook.com.au>"]
 license = "MIT"

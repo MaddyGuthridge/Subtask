@@ -125,14 +125,18 @@ class Subtask:
         self.process.kill()
 
     @overload
-    def wait(self, timeout: int) -> Optional[int]:
+    def wait(self, timeout: float) -> Optional[int]:
+        ...
+
+    @overload
+    def wait(self) -> int:
         ...
 
     @overload
     def wait(self, timeout: None = None) -> int:
         ...
 
-    def wait(self, timeout: Optional[int] = None) -> Optional[int]:
+    def wait(self, timeout: Optional[float] = None) -> Optional[int]:
         """Wait for the process to finish executing and return its exit code"""
         try:
             ret = self.process.wait(timeout)

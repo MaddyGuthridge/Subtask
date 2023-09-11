@@ -1,6 +1,7 @@
 """
 Basic tests for subtask
 """
+import pytest
 from subtask import Subtask
 
 
@@ -29,3 +30,8 @@ def test_input():
     )
     task.wait()
     assert task.read_stdout().strip() == "Hello world!"
+
+
+def test_invalid_exe():
+    with pytest.raises(FileNotFoundError):
+        Subtask(["not_a_real_program"])

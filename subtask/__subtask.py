@@ -144,6 +144,19 @@ class Subtask:
             return None
         return ret
 
+    def wait_for_zero(self, timeout: Optional[float] = None) -> None:
+        """
+        Wait for the process to finish executing, then assert that its exit
+        code is zero.
+
+        If the timeout is exceeded, an exception is raised.
+        """
+        status = self.wait(timeout)
+        if status is None:
+            raise TimeoutError('The process did not exit in time')
+        elif status != 0:
+            raise RuntimeError(f'The process exited with code {status}')
+
     def poll(self) -> Optional[int]:
         """Poll the process, returning `None` if it's still running, or its
         exit code if it has finished.

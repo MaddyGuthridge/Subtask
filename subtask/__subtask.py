@@ -2,7 +2,7 @@
 A simple wrapper around `subprocess.Popen` to reduce the painfulness of running
 multiple processes concurrently.
 
-Author: Miguel Guthridge
+Author: Maddy Guthridge
 """
 import os
 import subprocess

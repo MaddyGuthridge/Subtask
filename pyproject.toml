@@ -2,7 +2,7 @@
 name = "subtask"
 version = "1.1.1"
 description = "A simple wrapper around `subprocess.Popen` to reduce the painfulness of running multiple processes concurrently."
-authors = ["Maddy Guthridge <hdsq@outlook.com.au>"]
+authors = ["Maddy Guthridge <hello@maddyguthridge.com>"]
 license = "MIT"
 readme = "README.md"
 

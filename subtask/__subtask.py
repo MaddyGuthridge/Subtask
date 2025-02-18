@@ -4,6 +4,7 @@ multiple processes concurrently.
 
 Author: Maddy Guthridge
 """
+
 import os
 import subprocess
 import signal
@@ -54,7 +55,7 @@ class Subtask:
         if input is None:
             self.stdin = None
         else:
-            self.stdin = TemporaryFile('w')
+            self.stdin = TemporaryFile("w")
             self.stdin.write(input)
             self.stdin.seek(0)
         self.process = subprocess.Popen(
@@ -62,7 +63,7 @@ class Subtask:
             stdin=self.stdin,
             stdout=self.stdout,
             stderr=self.stderr,
-            env=curr_env
+            env=curr_env,
         )
         """Access to the underlying Popen object"""
 
@@ -78,41 +79,46 @@ class Subtask:
             raise RuntimeError("Failed to start process in time")
 
     def __del__(self) -> None:
-        # Always kill the subprocess when this goes out of scope, so we don't
-        # end up with an orphaned process
-        self.kill()
+        # If `self.process` is not assigned, do nothing, since the process was
+        # not started
+        if hasattr(self, "process"):
+            # Always kill the subprocess when this goes out of scope, so we
+            # don't end up with an orphaned process
+            self.kill()
 
     def write_stdout(self, output: Path) -> None:
         """Write the task's stdout to a file"""
         if self.stdout is None:
-            raise ValueError("Cannot write output to file if output was "
-                             "written to terminal")
+            raise ValueError(
+                "Cannot write output to file if output was written to terminal"
+            )
         self.stdout.seek(0)
-        with open(output, 'w+b') as f:
+        with open(output, "w+b") as f:
             f.write(self.stdout.read())
 
     def write_stderr(self, output: Path) -> None:
         """Write the task's stderr to a file"""
         if self.stderr is None:
-            raise ValueError("Cannot write output to file if output was "
-                             "written to terminal")
+            raise ValueError(
+                "Cannot write output to file if output was written to terminal"
+            )
         self.stderr.seek(0)
-        with open(output, 'w+b') as f:
+        with open(output, "w+b") as f:
             f.write(self.stderr.read())
 
     def read_stdout(self) -> str:
         """read the task's stdout to a file"""
         if self.stdout is None:
-            raise ValueError("Cannot read output if output was "
-                             "written to terminal")
+            raise ValueError(
+                "Cannot read output if output was written to terminal")
         self.stdout.seek(0)
         return self.stdout.read().decode()
 
     def read_stderr(self) -> str:
         """read the task's stderr to a file"""
         if self.stderr is None:
-            raise ValueError("Cannot read output if output was "
-                             "written to terminal")
+            raise ValueError(
+                "Cannot read output if output was written to terminal")
         self.stderr.seek(0)
         return self.stderr.read().decode()
 
@@ -122,19 +128,17 @@ class Subtask:
 
     def kill(self) -> None:
         """Kill the process forcefully (useful if it's not responding)"""
-        self.process.kill()
+        if self.process:
+            self.process.kill()
 
     @overload
-    def wait(self, timeout: float) -> Optional[int]:
-        ...
+    def wait(self, timeout: float) -> Optional[int]: ...
 
     @overload
-    def wait(self) -> int:
-        ...
+    def wait(self) -> int: ...
 
     @overload
-    def wait(self, timeout: None = None) -> int:
-        ...
+    def wait(self, timeout: None = None) -> int: ...
 
     def wait(self, timeout: Optional[float] = None) -> Optional[int]:
         """Wait for the process to finish executing and return its exit code"""
@@ -153,9 +157,9 @@ class Subtask:
         """
         status = self.wait(timeout)
         if status is None:
-            raise TimeoutError('The process did not exit in time')
+            raise TimeoutError("The process did not exit in time")
         elif status != 0:
-            raise RuntimeError(f'The process exited with code {status}')
+            raise RuntimeError(f"The process exited with code {status}")
 
     def poll(self) -> Optional[int]:
         """Poll the process, returning `None` if it's still running, or its

@@ -1,21 +1,12 @@
-[tool.poetry]
+[project]
 name = "subtask"
-version = "1.1.1"
+version = "1.1.2"
 description = "A simple wrapper around `subprocess.Popen` to reduce the painfulness of running multiple processes concurrently."
-authors = ["Maddy Guthridge <hello@maddyguthridge.com>"]
+authors = [{ name = "Maddy Guthridge", email = "hello@maddyguthridge.com" }]
 license = "MIT"
 readme = "README.md"
 
-repository = "https://github.com/MaddyGuthridge/subtask"
-documentation = "https://github.com/MaddyGuthridge/subtask"
-
-keywords = [
-    "popen",
-    "task",
-    "process",
-    "subprocess",
-    "subtask",
-]
+keywords = ["popen", "task", "process", "subprocess", "subtask"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Intended Audience :: Developers",
@@ -25,18 +16,17 @@ classifiers = [
     "Typing :: Typed",
     "Topic :: Software Development :: Libraries",
 ]
-include = ["py.typed"]
 
-packages = [
-    { include = "subtask" }
-]
+requires-python = ">=3.9"
 
-[tool.poetry.urls]
-"Online Documentation" = "https://github.com/MaddyGuthridge/subtask"
+[project.urls]
+repository = "https://github.com/MaddyGuthridge/subtask"
+documentation = "https://github.com/MaddyGuthridge/subtask"
 "Bug Tracker" = "https://github.com/MaddyGuthridge/subtask/issues"
 
-[tool.poetry.dependencies]
-python = "^3.9"
+[tool.poetry]
+
+include = ["py.typed"]
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.3.1,<9.0.0"
@@ -45,6 +35,7 @@ flake8 = ">=6,<8"
 typing-extensions = "^4.6.2"
 autopep8 = "^2.0.2"
 coverage = "^7.2.6"
+ruff = "^0.9.6"
 
 [build-system]
 requires = ["poetry-core"]

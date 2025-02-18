@@ -6,7 +6,7 @@ name: Test and Lint
 on: [push]
 
 jobs:
-  Pytest:
+  Test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -30,7 +30,7 @@ jobs:
       run: |
         poetry run coverage report
 
-  Flake8:
+  Lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -47,11 +47,11 @@ jobs:
         key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
     - run: poetry --version
     - run: poetry install
-    - name: Lint with flake8
+    - name: Lint with ruff
       run: |
-        poetry run flake8
+        poetry run ruff check
 
-  Mypy:
+  Type-check:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
@@ -70,4 +70,4 @@ jobs:
     - run: poetry install
     - name: Lint with mypy
       run: |
-        poetry run mypy .
+        poetry run mypy

@@ -6,13 +6,12 @@ Author: Maddy Guthridge
 """
 
 import os
-import subprocess
 import signal
+import subprocess
 import time
-from typing import overload
-from tempfile import TemporaryFile
 from pathlib import Path
-from typing import Optional, Callable
+from tempfile import TemporaryFile
+from typing import Callable, Optional, overload
 
 
 class Subtask:

@@ -13,22 +13,22 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: 3.9
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.9
 
-      # Install dependencies using Poetry
-      - uses: Gr1N/setup-poetry@v8
-      - uses: actions/cache@v2
-        with:
-          path: ~/.cache/pypoetry/virtualenvs
-          key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
-      - run: poetry --version
-      - run: poetry install
+    # Install dependencies using Poetry
+    - uses: Gr1N/setup-poetry@v9
+    - uses: actions/cache@v4
+      with:
+        path: ~/.cache/pypoetry/virtualenvs
+        key: ${{ runner.os }}-poetry-${{ hashFiles('poetry.lock') }}
+    - run: poetry --version
+    - run: poetry install
 
-      - name: Build and publish package
-        run: poetry publish --build -u __token__ -p ${{ secrets.PYPI_API_TOKEN }}
+    - name: Build and publish package
+      run: poetry publish --build -u __token__ -p ${{ secrets.PYPI_API_TOKEN }}

@@ -51,7 +51,7 @@ select = [
 
 [tool.poetry.group.dev.dependencies]
 pytest = ">=7.3.1,<9.0.0"
-mypy = "^1.16.1"
+mypy = "^1.17.1"
 typing-extensions = "^4.14.1"
 coverage = "^7.10.1"
 ruff = "^0.12.7"

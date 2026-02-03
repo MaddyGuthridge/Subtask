@@ -1,7 +1,7 @@
 # Subtask
 
 A simple wrapper around `subprocess.Popen` to reduce the painfulness of running
-multiple processes concurrently.
+multiple processes concurrently without async code.
 
 ```py
 task = Subtask(['python', 'hello.py'])
@@ -17,4 +17,5 @@ it much easier to capture outputs and give inputs to these processes.
 ## What is Subtask not for?
 
 Subtask is designed for simplicity. It should not be used if you want high
-performance, or to chain outputs for many files together.
+performance, or to chain outputs for many files together. If you need either of
+those, consider using the `asyncio.create_subprocess_exec`.

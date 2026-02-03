@@ -3,9 +3,9 @@ name = "subtask"
 version = "1.1.2"
 description = "A simple wrapper around `subprocess.Popen` to reduce the painfulness of running multiple processes concurrently."
 authors = [{ name = "Maddy Guthridge", email = "hello@maddyguthridge.com" }]
-license = "MIT"
+license = {text = "MIT"}
 readme = "README.md"
-
+requires-python = ">=3.9"
 keywords = ["popen", "task", "process", "subprocess", "subtask"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -17,16 +17,28 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
 ]
 
-requires-python = ">=3.9"
-
 [project.urls]
 repository = "https://github.com/MaddyGuthridge/subtask"
 documentation = "https://github.com/MaddyGuthridge/subtask"
 "Bug Tracker" = "https://github.com/MaddyGuthridge/subtask/issues"
 
-[tool.poetry]
 
-include = ["py.typed"]
+[dependency-groups]
+dev = [
+    "pytest>=7.3.1,<9.0.0",
+    "mypy>=1.19.1",
+    "typing-extensions>=4.15.0",
+    "coverage>=7.10.7",
+    "ruff>=0.14.10",
+]
+
+[build-system]
+requires = ["uv_build>=0.7.20,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = "subtask"
+module-root = ""
 
 [tool.mypy]
 check_untyped_defs = true
@@ -49,13 +61,14 @@ select = [
     "I",
 ]
 
-[tool.poetry.group.dev.dependencies]
-pytest = ">=7.3.1,<9.0.0"
-mypy = "^1.19.1"
-typing-extensions = "^4.15.0"
-coverage = "^7.10.7"
-ruff = "^0.14.10"
+[tool.coverage.run]
+branch = true
 
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.coverage.report]
+exclude_also = [
+    'if TYPE_CHECKING:',
+    'return NotImplemented',
+    '@overload',
+    'raise AssertionError',
+    'raise NotImplementedError',
+]
